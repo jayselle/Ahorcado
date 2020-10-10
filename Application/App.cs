@@ -10,7 +10,7 @@ namespace Application
             _juego = new Juego();
         }
 
-        public bool Validar(string palabra){
+        public bool ArriesgarPalabra(string palabra){
             return (_juego.Palabra == palabra);
         }
     }
