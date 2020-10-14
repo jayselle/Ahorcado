@@ -2,6 +2,8 @@
 {
     public class Juego
     {
-        public string Palabra = "auto";
+        public string Usuario = "Pepe";
+        public string Palabra = "automovil";
+        public string Modelo = "_ _ _ _ _ _ _ _ _";
     }
 }
