@@ -95,10 +95,10 @@ namespace Test
             string letraIngresada = "*";
 
             // Act
-            var answer = app.ArriesgarLetra(letraIngresada);
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.IsFalse(answer);
+            Assert.IsFalse(respuesta.Coincidencia);
         }
 
         [TestMethod]
@@ -110,10 +110,10 @@ namespace Test
             string letraIngresada = "muchasletras";
 
             // Act
-            var answer = app.ArriesgarLetra(letraIngresada);
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.IsFalse(answer);
+            Assert.IsFalse(respuesta.Coincidencia);
         }
 
         [TestMethod]
@@ -124,10 +124,10 @@ namespace Test
             string letraIngresada = "e";
 
             // Act
-            var answer = app.ArriesgarLetra(letraIngresada);
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.IsFalse(answer);
+            Assert.IsFalse(respuesta.Coincidencia);
         }
 
         [TestMethod]
@@ -138,10 +138,10 @@ namespace Test
             string letraIngresada = "o";
 
             // Act
-            var answer = app.ArriesgarLetra(letraIngresada);
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.IsTrue(answer);
+            Assert.IsTrue(respuesta.Coincidencia);
         }
 
         [TestMethod]
@@ -152,11 +152,10 @@ namespace Test
             string letraIngresada = "b";
 
             // Act
-            app.SaveModelo(letraIngresada);
-            string modelo = app.GetModelo();
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.AreEqual(modelo, "_ _ _ _ _ _ _ _ _");
+            Assert.AreEqual(respuesta.Modelo, "_ _ _ _ _ _ _ _ _");
         }
 
         [TestMethod]
@@ -167,11 +166,10 @@ namespace Test
             string letraIngresada = "a";
 
             // Act
-            app.SaveModelo(letraIngresada);
-            string modelo = app.GetModelo();
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.AreEqual(modelo, "A _ _ _ _ _ _ _ _");
+            Assert.AreEqual(respuesta.Modelo, "A _ _ _ _ _ _ _ _");
         }
 
         [TestMethod]
@@ -182,11 +180,10 @@ namespace Test
             string letraIngresada = "o";
 
             // Act
-            app.SaveModelo(letraIngresada);
-            string modelo = app.GetModelo();
+            var respuesta = app.ArriesgarLetra(letraIngresada);
  
             // Assert
-            Assert.AreEqual(modelo, "_ _ _ O _ O _ _ _");
+            Assert.AreEqual(respuesta.Modelo, "_ _ _ O _ O _ _ _");
         }
 
         [TestMethod]
@@ -199,13 +196,15 @@ namespace Test
             letrasIngresadas.Add("r");
             letrasIngresadas.Add("K");
             letrasIngresadas.Add("e");
-
+            var modelo = "";
+            
             // Act
             foreach (var letraIngresada in letrasIngresadas)
             {
-                app.SaveModelo(letraIngresada);
+                var respuesta = app.ArriesgarLetra(letraIngresada);
+    
+                modelo = respuesta.Modelo;
             }
-            string modelo = app.GetModelo();
  
             // Assert
             Assert.AreEqual(modelo, "_ _ _ _ _ _ _ _ _");
@@ -221,13 +220,15 @@ namespace Test
             letrasIngresadas.Add("o");
             letrasIngresadas.Add("q");
             letrasIngresadas.Add("L");
+            var modelo = "";
 
             // Act
             foreach (var letraIngresada in letrasIngresadas)
             {
-                app.SaveModelo(letraIngresada);
+                var respuesta = app.ArriesgarLetra(letraIngresada);
+    
+                modelo = respuesta.Modelo;
             }
-            string modelo = app.GetModelo();
  
             // Assert
             Assert.AreEqual(modelo, "_ _ _ O _ O _ _ L");
@@ -247,16 +248,98 @@ namespace Test
             letrasIngresadas.Add("o");
             letrasIngresadas.Add("v");
             letrasIngresadas.Add("i");
+            var modelo = "";
 
             // Act
             foreach (var letraIngresada in letrasIngresadas)
             {
-                app.SaveModelo(letraIngresada);
+                var respuesta = app.ArriesgarLetra(letraIngresada);
+    
+                modelo = respuesta.Modelo;
             }
-            string modelo = app.GetModelo();
  
             // Assert
             Assert.AreEqual(modelo, "A U T O M O V I L");
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Juego_Perdido_Con_Seis_Intentos_Fallidos()
+        {
+            // Arrange
+            App app = new App();
+            var letrasIngresadas = new List<string>();
+            letrasIngresadas.Add("s");
+            letrasIngresadas.Add("Y");
+            letrasIngresadas.Add("b");
+            letrasIngresadas.Add("c");
+            letrasIngresadas.Add("R");
+            letrasIngresadas.Add("K");
+            var cantIntentos = 6;
+            
+            // Act
+            foreach (var letraIngresada in letrasIngresadas)
+            {
+                var respuesta = app.ArriesgarLetra(letraIngresada);
+    
+                cantIntentos = respuesta.CantIntentos;
+            }
+ 
+            // Assert
+            Assert.AreEqual(cantIntentos, 0);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Fallidos()
+        {
+            // Arrange
+            App app = new App();
+            var letrasIngresadas = new List<string>();
+            letrasIngresadas.Add("s");
+            letrasIngresadas.Add("Y");
+            letrasIngresadas.Add("b");
+            letrasIngresadas.Add("c");
+            letrasIngresadas.Add("R");
+            letrasIngresadas.Add("K");
+            var puntaje = 0;
+            
+            // Act
+            foreach (var letraIngresada in letrasIngresadas)
+            {
+                var respuesta = app.ArriesgarLetra(letraIngresada);
+    
+                puntaje = respuesta.Puntaje;
+            }
+ 
+            // Assert
+            Assert.AreEqual(puntaje, -60);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Acertados()
+        {
+            // Arrange
+            App app = new App();
+            var letrasIngresadas = new List<string>();
+            letrasIngresadas.Add("l");
+            letrasIngresadas.Add("U");
+            letrasIngresadas.Add("T");
+            letrasIngresadas.Add("m");
+            letrasIngresadas.Add("a");
+            letrasIngresadas.Add("o");
+            letrasIngresadas.Add("v");
+            letrasIngresadas.Add("i");
+            var puntaje = 0;
+            
+            // Act
+            foreach (var letraIngresada in letrasIngresadas)
+            {
+                var respuesta = app.ArriesgarLetra(letraIngresada);
+    
+                puntaje = respuesta.Puntaje;
+            }
+ 
+            // Assert
+            Assert.AreEqual(puntaje, 800);
         }
     }
 }
