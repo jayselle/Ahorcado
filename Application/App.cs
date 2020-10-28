@@ -1,57 +1,64 @@
-﻿using Domain;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using Domain;
+using Persistence;
+using Models;
+using System.Threading.Tasks;
 
 namespace Application
 {
     public class App
     {
-        private Juego _juego;
-        
-        public App(){
-            _juego = new Juego();
+        private readonly DataContext _context;
+
+        public App(DataContext context){
+            _context = context;
         }
 
         #region Palabra
-        public bool ArriesgarPalabra(string palabra){
-            return (_juego.Palabra == palabra);
-        }
-
-        public GetJuegoRespuesta ArriesgarLetra(string letra){
+        public async Task<GetJuegoRespuesta> ArriesgarLetra(string letra){
             
-            var letrasIngresadas = _juego.LetrasIngresadas;
+            var juego = await _context.Juegos.FindAsync(1);
+
+            var letrasIngresadas = juego.LetrasIngresadas;
 
             if (!letra.All(char.IsLetter))
-                throw new ArgumentException("- Solo letras");
+                throw new ArgumentException("Solo letras");
             if (letra.Length != 1)
-                throw new ArgumentOutOfRangeException(string.Empty, "- Ingresar solo una letra");
+                throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra");
+            
+            var nuevaLetra = new LetraIngresada{
+                Letra = letra,
+                Juego = juego
+            };
 
-            char l = char.ToLower(char.Parse(letra));
-            
-            if (letrasIngresadas.Exists(x => x == l))
-                throw new ArgumentException("- Letra ya ingresada. " + this.GetLetrasIngresadas());
-            else
-               letrasIngresadas.Add(l); 
-            
+            _context.LetraIngresadas.Add(nuevaLetra);
+
             var letras = new List<char>();
             
-            letras.AddRange(_juego.Palabra.ToLower());
+            letras.AddRange(juego.Palabra.ToLower());
 
-            var coincidencia = letras.Exists(x => x == l);
+            var coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letra)));
 
-            this.SavePuntaje(coincidencia);
+            if (coincidencia) {
+                juego.Puntaje += 100;
+                juego.Modelo = this.GetNewModel(juego.Modelo, juego.Palabra, letra);
+            } else {
+                juego.Puntaje -= 100;
+                juego.CantIntentos -= 1;
+            }
 
-            if (coincidencia)
-                this.SaveModelo(letra);
-            else
-                this.RestarIntento();
+            var success = await _context.SaveChangesAsync() > 0;
+
+            if (!success)
+                throw new Exception("Problem saving changes");
 
             var GetJuegoRespuesta = new GetJuegoRespuesta {
-                Modelo = this.GetModelo(),
-                LetrasIngresadas = this.GetLetrasIngresadas(),
-                CantIntentos = this.GetIntentos(),
-                Puntaje = this.GetPuntaje(),
+                Modelo = juego.Modelo,
+                LetrasIngresadas = null,
+                CantIntentos = juego.CantIntentos,
+                Puntaje = juego.Puntaje,
                 Coincidencia = coincidencia
             };
 
@@ -59,25 +66,21 @@ namespace Application
         }
         #endregion
 
-        #region Modelo
-        public string GetModelo(){
-            return _juego.Modelo;
-        }
-
-        public void SaveModelo(string letra){
+        #region Helpers
+        public string GetNewModel(string modelo, string palabra, string letra){
 
             char l = char.ToLower(char.Parse(letra));
-            
-            var palabra = new List<char>();
-            
-            palabra.AddRange(_juego.Palabra.ToLower());
-            
-            var modeloSinEspacios = new List<char>();
-            
-            modeloSinEspacios.AddRange(_juego.Modelo.Replace(" ",""));
+                        
+            var p = new List<char>();
 
-            for (int i = 0; i < palabra.Count; i++){
-                if (palabra[i] == l)
+            p.AddRange(palabra.ToLower());
+
+            var modeloSinEspacios = new List<char>();
+
+            modeloSinEspacios.AddRange(modelo.Replace(" ",""));
+
+            for (int i = 0; i < p.Count; i++){
+                if (p[i] == l)
                     modeloSinEspacios[i] = char.ToUpper(l);
             }
 
@@ -90,50 +93,7 @@ namespace Application
                     str += modeloSinEspacios[i] + " ";
             }
 
-            _juego.Modelo = str;
-        }
-        #endregion
-
-        #region Usuario
-        public string GetUsuario(){
-            return _juego.Usuario;
-        }
-        #endregion
-
-        #region Intentos
-        public int GetIntentos(){
-            return _juego.CantIntentos;
-        }
-
-        public void RestarIntento(){
-            _juego.CantIntentos = _juego.CantIntentos - 1;
-        }
-        #endregion
-
-        #region Score
-        public int GetPuntaje(){
-            return _juego.Puntaje;
-        }
-
-        public void SavePuntaje(bool coincidencia){
-            if (coincidencia)
-                _juego.Puntaje += 100;
-            else
-                _juego.Puntaje -= 10;
-        }
-        #endregion
-
-        #region Helpers
-        public string GetLetrasIngresadas(){
-            string letras = "";
-            var letrasIngresadas = _juego.LetrasIngresadas;
-            if (letrasIngresadas.Count > 0){
-                foreach (var letra in letrasIngresadas)
-                {
-                    letras += letra + " ";
-                }
-            }
-            return letras;
+            return str;
         }
         #endregion
     }

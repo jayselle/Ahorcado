@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Application;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test
@@ -10,235 +9,288 @@ namespace Test
     public class JuegoTests
     {
         [TestMethod]
-        public void Test_Palabra_Ingresada_Sin_Numeros()
-        {
-            // Arrange
-            string palabraIngresada = "auto";
-
-            // Act
-            var answer = !palabraIngresada.Any(char.IsDigit);
- 
-            // Assert
-            Assert.IsTrue(answer);
-        }
-
-        [TestMethod]
-        public void Test_Palabra_Ingresada_Con_Letras()
-        {
-            // Arrange
-            string palabraIngresada = "auto";
-
-            // Act
-            var answer = palabraIngresada.All(char.IsLetter);
- 
-            // Assert
-            Assert.IsTrue(answer);
-        }
-
-        [TestMethod]
-        public void Test_Palabra_Ingresada_Longitud()
-        {
-            // Arrange
-            string palabraIngresada = "auto";
-
-            // Act and Assert
-            Assert.AreEqual(palabraIngresada.Length, 4);
-        }
-
-        [TestMethod]
-        public void Test_Palabra_Ingresada_Sin_Espacios()
-        {
-            // Arrange
-            string palabraIngresada = "auto";
-
-            // Act
-            var answer = !palabraIngresada.Any(c=> c.Equals(" "));
- 
-            // Assert
-            Assert.IsTrue(answer);
-        }
-
-        [TestMethod]
-        public void Test_Palabra_Ingresada_Distinta_A_La_Hardcodeada()
-        {
-            // Arrange
-            App app = new App();
-            string palabraIngresada = "moto";
-
-            // Act
-            var answer = app.ArriesgarPalabra(palabraIngresada);
- 
-            // Assert
-            Assert.IsFalse(answer);
-        }
-
-        [TestMethod]
-        public void Test_Palabra_Ingresada_Igual_A_La_Hardcodeada()
-        {
-            // Arrange
-            App app = new App();
-            string palabraIngresada = "automovil";
-
-            // Act
-            var answer = app.ArriesgarPalabra(palabraIngresada);
-
-            // Assert
-            Assert.IsTrue(answer);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "Solo letras")]
         public void Test_Arriesgar_Letra_Pero_Es_Cualquier_Cosa_Menos_Una_Letra()
         {
             // Arrange
-            App app = new App();
             string letraIngresada = "*";
-
+            string errorMessage = "";
+            
             // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
+            try{
+                if (!letraIngresada.All(char.IsLetter))
+                    throw new ArgumentException("Solo letras");
+            } catch (ArgumentException e){
+                errorMessage = e.Message;
+            }
+
             // Assert
-            Assert.IsFalse(respuesta.Coincidencia);
+            Assert.AreEqual("Solo letras", errorMessage);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Ingresar solo una letra")]
         public void Test_Arriesgar_Letra_Pero_Son_Muchas_Letras()
         {
             // Arrange
-            App app = new App();
             string letraIngresada = "muchasletras";
+            string errorMessage = "";
 
             // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
+            try{
+                if (letraIngresada.Length != 1)
+                    throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra");
+            } catch (ArgumentOutOfRangeException e){
+                errorMessage = e.Message;
+            }
+
             // Assert
-            Assert.IsFalse(respuesta.Coincidencia);
+            Assert.AreEqual("Ingresar solo una letra", errorMessage);
         }
 
         [TestMethod]
         public void Test_Arriesgar_Letra_Que_No_Esta()
         {
             // Arrange
-            App app = new App();
+            string palabraParaAdivinar = "automovil";
             string letraIngresada = "e";
 
             // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
+            var letras = new List<char>();
+            
+            letras.AddRange(palabraParaAdivinar.ToLower());
+
+            bool coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada)));
+
             // Assert
-            Assert.IsFalse(respuesta.Coincidencia);
+            Assert.IsFalse(coincidencia);
         }
 
         [TestMethod]
         public void Test_Arriesgar_Letra_Que_Si_Esta()
         {
             // Arrange
-            App app = new App();
-            string letraIngresada = "o";
-
-            // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
-            // Assert
-            Assert.IsTrue(respuesta.Coincidencia);
-        }
-
-        [TestMethod]
-        public void Test_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_No_Esta()
-        {
-            // Arrange
-            App app = new App();
-            string letraIngresada = "b";
-
-            // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
-            // Assert
-            Assert.AreEqual(respuesta.Modelo, "_ _ _ _ _ _ _ _ _");
-        }
-
-        [TestMethod]
-        public void Test_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Si_Esta()
-        {
-            // Arrange
-            App app = new App();
+            string palabraParaAdivinar = "automovil";
             string letraIngresada = "a";
 
             // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
+            var letras = new List<char>();
+            
+            letras.AddRange(palabraParaAdivinar.ToLower());
+
+            bool coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada)));
+
             // Assert
-            Assert.AreEqual(respuesta.Modelo, "A _ _ _ _ _ _ _ _");
+            Assert.IsTrue(coincidencia);
         }
 
         [TestMethod]
-        public void Test_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Esta_Repetida()
+        public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_No_Esta()
         {
             // Arrange
-            App app = new App();
+            string modeloActual = "_ _ _ _ _ _ _ _ _";
+            string palabraParaAdivinar = "automovil";
+            string letraIngresada = "b";
+
+            // Act
+            char l = char.ToLower(char.Parse(letraIngresada));
+                        
+            var p = new List<char>();
+
+            p.AddRange(palabraParaAdivinar.ToLower());
+
+            var modeloSinEspacios = new List<char>();
+
+            modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+
+            for (int i = 0; i < p.Count; i++){
+                if (p[i] == l)
+                    modeloSinEspacios[i] = char.ToUpper(l);
+            }
+
+            string str = "";
+
+            for (int i = 0; i < modeloSinEspacios.Count; i++){
+                if (i == modeloSinEspacios.Count - 1)
+                    str += modeloSinEspacios[i];
+                else
+                    str += modeloSinEspacios[i] + " ";
+            }
+
+            // Assert
+            Assert.AreEqual(str, "_ _ _ _ _ _ _ _ _");
+        }
+
+        [TestMethod]
+        public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Si_Esta()
+        {
+            // Arrange
+            string modeloActual = "_ _ _ _ _ _ _ _ _";
+            string palabraParaAdivinar = "automovil";
+            string letraIngresada = "a";
+
+            // Act
+            char l = char.ToLower(char.Parse(letraIngresada));
+                        
+            var p = new List<char>();
+
+            p.AddRange(palabraParaAdivinar.ToLower());
+
+            var modeloSinEspacios = new List<char>();
+
+            modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+
+            for (int i = 0; i < p.Count; i++){
+                if (p[i] == l)
+                    modeloSinEspacios[i] = char.ToUpper(l);
+            }
+
+            string str = "";
+
+            for (int i = 0; i < modeloSinEspacios.Count; i++){
+                if (i == modeloSinEspacios.Count - 1)
+                    str += modeloSinEspacios[i];
+                else
+                    str += modeloSinEspacios[i] + " ";
+            }
+
+            // Assert
+            Assert.AreEqual(str, "A _ _ _ _ _ _ _ _");
+        }
+
+        [TestMethod]
+        public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Esta_Repetida()
+        {
+            // Arrange
+            string modeloActual = "_ _ _ _ _ _ _ _ _";
+            string palabraParaAdivinar = "automovil";
             string letraIngresada = "o";
 
             // Act
-            var respuesta = app.ArriesgarLetra(letraIngresada);
- 
+            char l = char.ToLower(char.Parse(letraIngresada));
+                        
+            var p = new List<char>();
+
+            p.AddRange(palabraParaAdivinar.ToLower());
+
+            var modeloSinEspacios = new List<char>();
+
+            modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+
+            for (int i = 0; i < p.Count; i++){
+                if (p[i] == l)
+                    modeloSinEspacios[i] = char.ToUpper(l);
+            }
+
+            string str = "";
+
+            for (int i = 0; i < modeloSinEspacios.Count; i++){
+                if (i == modeloSinEspacios.Count - 1)
+                    str += modeloSinEspacios[i];
+                else
+                    str += modeloSinEspacios[i] + " ";
+            }
+
             // Assert
-            Assert.AreEqual(respuesta.Modelo, "_ _ _ O _ O _ _ _");
+            Assert.AreEqual(str, "_ _ _ O _ O _ _ _");
         }
 
         [TestMethod]
-        public void Test_Modelo_Ahorcado_Despues_De_Ingresar_Letras_Que_No_Coinciden()
+        public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Despues_De_Ingresar_Letras_Que_No_Coinciden()
         {
             // Arrange
-            App app = new App();
+            string modeloActual = "_ _ _ _ _ _ _ _ _";
+            string palabraParaAdivinar = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("p");
             letrasIngresadas.Add("r");
             letrasIngresadas.Add("K");
             letrasIngresadas.Add("e");
-            var modelo = "";
             
             // Act
             foreach (var letraIngresada in letrasIngresadas)
             {
-                var respuesta = app.ArriesgarLetra(letraIngresada);
-    
-                modelo = respuesta.Modelo;
+                char l = char.ToLower(char.Parse(letraIngresada));
+                        
+                var p = new List<char>();
+
+                p.AddRange(palabraParaAdivinar.ToLower());
+
+                var modeloSinEspacios = new List<char>();
+
+                modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+
+                for (int i = 0; i < p.Count; i++){
+                    if (p[i] == l)
+                        modeloSinEspacios[i] = char.ToUpper(l);
+                }
+
+                string str = "";
+
+                for (int i = 0; i < modeloSinEspacios.Count; i++){
+                    if (i == modeloSinEspacios.Count - 1)
+                        str += modeloSinEspacios[i];
+                    else
+                        str += modeloSinEspacios[i] + " ";
+                }
+
+                modeloActual = str;
             }
  
             // Assert
-            Assert.AreEqual(modelo, "_ _ _ _ _ _ _ _ _");
+            Assert.AreEqual(modeloActual, "_ _ _ _ _ _ _ _ _");
         }
 
         [TestMethod]
-        public void Test_Modelo_Ahorcado_Despues_De_Ingresar_Las_Letras_D_O_Q_L()
+        public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Despues_De_Ingresar_Las_Letras_D_O_Q_L()
         {
             // Arrange
-            App app = new App();
+            string modeloActual = "_ _ _ _ _ _ _ _ _";
+            string palabraParaAdivinar = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("d");
             letrasIngresadas.Add("o");
             letrasIngresadas.Add("q");
             letrasIngresadas.Add("L");
-            var modelo = "";
-
+            
             // Act
             foreach (var letraIngresada in letrasIngresadas)
             {
-                var respuesta = app.ArriesgarLetra(letraIngresada);
-    
-                modelo = respuesta.Modelo;
+                char l = char.ToLower(char.Parse(letraIngresada));
+                        
+                var p = new List<char>();
+
+                p.AddRange(palabraParaAdivinar.ToLower());
+
+                var modeloSinEspacios = new List<char>();
+
+                modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+
+                for (int i = 0; i < p.Count; i++){
+                    if (p[i] == l)
+                        modeloSinEspacios[i] = char.ToUpper(l);
+                }
+
+                string str = "";
+
+                for (int i = 0; i < modeloSinEspacios.Count; i++){
+                    if (i == modeloSinEspacios.Count - 1)
+                        str += modeloSinEspacios[i];
+                    else
+                        str += modeloSinEspacios[i] + " ";
+                }
+
+                modeloActual = str;
             }
  
             // Assert
-            Assert.AreEqual(modelo, "_ _ _ O _ O _ _ L");
+            Assert.AreEqual(modeloActual, "_ _ _ O _ O _ _ L");
         }
 
         [TestMethod]
-        public void Test_Modelo_Ahorcado_Completo_Despues_De_Ingresar_Letras_Que_Si_Coinciden()
+        public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Completo_Despues_De_Ingresar_Letras_Que_Si_Coinciden()
         {
             // Arrange
-            App app = new App();
+            string modeloActual = "_ _ _ _ _ _ _ _ _";
+            string palabraParaAdivinar = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("l");
             letrasIngresadas.Add("U");
@@ -248,25 +300,46 @@ namespace Test
             letrasIngresadas.Add("o");
             letrasIngresadas.Add("v");
             letrasIngresadas.Add("i");
-            var modelo = "";
-
+            
             // Act
             foreach (var letraIngresada in letrasIngresadas)
             {
-                var respuesta = app.ArriesgarLetra(letraIngresada);
-    
-                modelo = respuesta.Modelo;
+                char l = char.ToLower(char.Parse(letraIngresada));
+                        
+                var p = new List<char>();
+
+                p.AddRange(palabraParaAdivinar.ToLower());
+
+                var modeloSinEspacios = new List<char>();
+
+                modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+
+                for (int i = 0; i < p.Count; i++){
+                    if (p[i] == l)
+                        modeloSinEspacios[i] = char.ToUpper(l);
+                }
+
+                string str = "";
+
+                for (int i = 0; i < modeloSinEspacios.Count; i++){
+                    if (i == modeloSinEspacios.Count - 1)
+                        str += modeloSinEspacios[i];
+                    else
+                        str += modeloSinEspacios[i] + " ";
+                }
+
+                modeloActual = str;
             }
  
             // Assert
-            Assert.AreEqual(modelo, "A U T O M O V I L");
+            Assert.AreEqual(modeloActual, "A U T O M O V I L");
         }
 
         [TestMethod]
         public void Test_Modelo_Ahorcado_Juego_Perdido_Con_Seis_Intentos_Fallidos()
         {
             // Arrange
-            App app = new App();
+            string palabraParaAdivinar = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("s");
             letrasIngresadas.Add("Y");
@@ -274,16 +347,19 @@ namespace Test
             letrasIngresadas.Add("c");
             letrasIngresadas.Add("R");
             letrasIngresadas.Add("K");
-            var cantIntentos = 6;
-            
+            int cantIntentos = 6;
+
             // Act
+            var letras = new List<char>();
+            
+            letras.AddRange(palabraParaAdivinar.ToLower());
+
             foreach (var letraIngresada in letrasIngresadas)
             {
-                var respuesta = app.ArriesgarLetra(letraIngresada);
-    
-                cantIntentos = respuesta.CantIntentos;
+                if (!letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada))))
+                    cantIntentos = cantIntentos - 1;
             }
- 
+
             // Assert
             Assert.AreEqual(cantIntentos, 0);
         }
@@ -292,7 +368,7 @@ namespace Test
         public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Fallidos()
         {
             // Arrange
-            App app = new App();
+            string palabraParaAdivinar = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("s");
             letrasIngresadas.Add("Y");
@@ -300,14 +376,17 @@ namespace Test
             letrasIngresadas.Add("c");
             letrasIngresadas.Add("R");
             letrasIngresadas.Add("K");
-            var puntaje = 0;
+            int puntaje = 0;
             
             // Act
+            var letras = new List<char>();
+            
+            letras.AddRange(palabraParaAdivinar.ToLower());
+
             foreach (var letraIngresada in letrasIngresadas)
             {
-                var respuesta = app.ArriesgarLetra(letraIngresada);
-    
-                puntaje = respuesta.Puntaje;
+                if (!letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada))))
+                    puntaje = puntaje - 10;
             }
  
             // Assert
@@ -318,7 +397,7 @@ namespace Test
         public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Acertados()
         {
             // Arrange
-            App app = new App();
+            string palabraParaAdivinar = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("l");
             letrasIngresadas.Add("U");
@@ -328,14 +407,17 @@ namespace Test
             letrasIngresadas.Add("o");
             letrasIngresadas.Add("v");
             letrasIngresadas.Add("i");
-            var puntaje = 0;
+            int puntaje = 0;
             
-            // Act
+             // Act
+            var letras = new List<char>();
+            
+            letras.AddRange(palabraParaAdivinar.ToLower());
+
             foreach (var letraIngresada in letrasIngresadas)
             {
-                var respuesta = app.ArriesgarLetra(letraIngresada);
-    
-                puntaje = respuesta.Puntaje;
+                if (letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada))))
+                    puntaje = puntaje + 100;
             }
  
             // Assert

@@ -4,11 +4,12 @@ namespace Domain
 {
     public class Juego
     {
-        public string Usuario = "Pepe";
-        public string Palabra = "automovil";
-        public string Modelo = "_ _ _ _ _ _ _ _ _";
-        public List<char> LetrasIngresadas = new List<char>();
-        public int CantIntentos = 6;
-        public int Puntaje = 0;
+        public int Id { get; set; }
+        public string Usuario { get; set; }
+        public string Palabra { get; set; }
+        public string Modelo { get; set; }
+        public int CantIntentos { get; set; }
+        public int Puntaje { get; set; }
+        public List<LetraIngresada> LetrasIngresadas { get; set; }
     }
 }
