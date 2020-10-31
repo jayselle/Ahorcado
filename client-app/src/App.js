@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
+import Ahorcado from './components/Ahorcado';
+
 
 class App extends Component {
   render() {
     return (
-      <React.Fragment>
-        <h1>Ahorcado</h1>
-      </React.Fragment>
+      <div className="App">
+        <Ahorcado />
+      </div>
     );
   }
 }
