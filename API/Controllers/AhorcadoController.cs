@@ -15,18 +15,26 @@ namespace API.Controllers
             _app = app;
         }
 
-        [HttpPost("{letra}")]
-        public ActionResult<GetJuegoRespuesta> Post(string letra)
+        [HttpGet]
+        public ActionResult<string> GetModelo()
+        {
+            var respuesta = _app.GetModelo();
+
+            return Ok(respuesta);
+        }
+
+        [HttpPost]
+        public ActionResult<GetJuegoRespuesta> ArriesgarLetra([FromBody] GetJuegoPedido pedido)
         {
             try
             {
-                var respuesta = _app.ArriesgarLetra(letra);
+                var respuesta = _app.ArriesgarLetra(pedido.letra);
                 
-                return Ok(respuesta.Result);
+                return Ok(respuesta);
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
 
         }

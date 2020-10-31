@@ -17,6 +17,13 @@ namespace Application
         }
 
         #region Palabra
+        public async Task<string> GetModelo(){
+            
+            var juego = await _context.Juegos.FindAsync(1);
+
+            return juego.Modelo;
+        }
+
         public async Task<GetJuegoRespuesta> ArriesgarLetra(string letra){
             
             var juego = await _context.Juegos.FindAsync(1);
@@ -24,17 +31,22 @@ namespace Application
             var letrasIngresadas = juego.LetrasIngresadas;
 
             if (!letra.All(char.IsLetter))
-                throw new ArgumentException("Solo letras");
+                throw new ArgumentException("Solo letras.");
             if (letra.Length != 1)
-                throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra");
+                throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra.");
             
-            var nuevaLetra = new LetraIngresada{
-                Letra = letra,
-                Juego = juego
-            };
+            if (letrasIngresadas.Exists(x => x.Letra == letra))
+                throw new ArgumentException("Letra ya ingresada."); 
+            else 
+            {
+                var nuevaLetra = new LetraIngresada {
+                    Letra = letra,
+                    Juego = juego
+                };
 
-            _context.LetraIngresadas.Add(nuevaLetra);
-
+                _context.LetraIngresadas.Add(nuevaLetra);
+            }
+            
             var letras = new List<char>();
             
             letras.AddRange(juego.Palabra.ToLower());

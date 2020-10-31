@@ -2,6 +2,11 @@
 
 namespace Models
 {
+    public class GetJuegoPedido
+    {
+        public string letra { get; set; }
+    }
+
     public class GetJuegoRespuesta
     {
         public string Modelo { get; set; }
