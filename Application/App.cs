@@ -17,36 +17,47 @@ namespace Application
         }
 
         #region Palabra
-        public async Task<string> GetModelo(){
+        public async Task<GetJuegoRespuesta> GetModelo(){
             
             var juego = await _context.Juegos.FindAsync(1);
 
-            return juego.Modelo;
+            var letrasIngresadas = _context.LetraIngresadas.Where(x => x.Juego.Id == 1).ToList();
+
+            var GetJuegoRespuesta = new GetJuegoRespuesta {
+                Modelo = juego.Modelo,
+                LetrasIngresadas = letrasIngresadas.Select(
+                    x => new GetJuegoRespuesta.LetraIngresada { Letra = x.Letra }).ToList(),
+                CantIntentos = juego.CantIntentos,
+                Puntaje = juego.Puntaje,
+                Coincidencia = false
+            };
+
+            return GetJuegoRespuesta;
         }
 
         public async Task<GetJuegoRespuesta> ArriesgarLetra(string letra){
             
             var juego = await _context.Juegos.FindAsync(1);
 
-            var letrasIngresadas = juego.LetrasIngresadas;
+            var letrasIngresadas = _context.LetraIngresadas.Where(x => x.Juego.Id == 1).ToList();
 
             if (!letra.All(char.IsLetter))
-                throw new ArgumentException("Solo letras.");
+                throw new Exception("Solo letras.");
             if (letra.Length != 1)
-                throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra.");
+                throw new Exception("Ingresar solo una letra.");
             
-            if (letrasIngresadas.Exists(x => x.Letra == letra))
-                throw new ArgumentException("Letra ya ingresada."); 
-            else 
-            {
+            if (letrasIngresadas.Exists(x => x.Letra == letra)){
+                 throw new Exception("Letra ya ingresada.");
+            } else {
                 var nuevaLetra = new LetraIngresada {
                     Letra = letra,
                     Juego = juego
                 };
 
+                letrasIngresadas.Add(nuevaLetra);
                 _context.LetraIngresadas.Add(nuevaLetra);
             }
-            
+
             var letras = new List<char>();
             
             letras.AddRange(juego.Palabra.ToLower());
@@ -68,7 +79,8 @@ namespace Application
 
             var GetJuegoRespuesta = new GetJuegoRespuesta {
                 Modelo = juego.Modelo,
-                LetrasIngresadas = null,
+                LetrasIngresadas = letrasIngresadas.Select(
+                    x => new GetJuegoRespuesta.LetraIngresada { Letra = x.Letra }).ToList(),
                 CantIntentos = juego.CantIntentos,
                 Puntaje = juego.Puntaje,
                 Coincidencia = coincidencia

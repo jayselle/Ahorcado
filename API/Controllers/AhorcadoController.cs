@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Application;
 using Models;
@@ -20,7 +21,7 @@ namespace API.Controllers
         {
             var respuesta = _app.GetModelo();
 
-            return Ok(respuesta);
+            return Ok(respuesta.Result);
         }
 
         [HttpPost]
@@ -30,13 +31,12 @@ namespace API.Controllers
             {
                 var respuesta = _app.ArriesgarLetra(pedido.letra);
                 
-                return Ok(respuesta);
+                return Ok(respuesta.Result);
             }
             catch (Exception e)
             {
                 return BadRequest(e);
             }
-
         }
     }
 }

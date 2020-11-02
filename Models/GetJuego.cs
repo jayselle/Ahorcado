@@ -16,7 +16,6 @@ namespace Models
         public List<LetraIngresada> LetrasIngresadas { get; set; }
         public class LetraIngresada
         {
-            public int Id { get; set; }
             public string Letra { get; set; }
         }
     }
