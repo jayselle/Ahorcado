@@ -18,7 +18,8 @@ class App extends Component {
             puntaje: 0,
             modelo: "",
             letrasIngresadas: [],
-            imagenes: [con0intentos, con1intentos, con2intentos, con3intentos, con4intentos, con5intentos, con6intentos]
+            imagenes: [con0intentos, con1intentos, con2intentos, con3intentos, con4intentos, con5intentos, con6intentos],
+            loading: true
         }
     }
 
@@ -28,17 +29,20 @@ class App extends Component {
                 modelo: response.data.modelo,
                 cantIntentos: response.data.cantIntentos,
                 puntaje: response.data.puntaje,
-                letrasIngresadas: response.data.letrasIngresadas
+                letrasIngresadas: response.data.letrasIngresadas,
+                loading: false
             });
         });
     }    
 
     generarTablero() {
+        const letrasIngresadas = this.state.letrasIngresadas;
         const tablero = "aeioubcdfghjklmnñpqrstvwxyz".split("").map((letra, index) => {
             return (
                 <React.Fragment key={index}>
                     <Letra
                         letra={letra}
+                        habilitado={letrasIngresadas.filter(x => x.letra === letra).length <= 0}
                         onIngresarLetra={this.arriesgarLetra} />
                 </React.Fragment>
             )
@@ -63,6 +67,9 @@ class App extends Component {
     }
 
     render(){
+        if (this.state.loading)
+            return null;
+        
         return(
             <React.Fragment>
                 <div className="d-flex justify-content-center">

@@ -16,48 +16,49 @@ configure({ adapter: new Adapter() });
 describe("Image", () => {
   it("se muestra la imagen con 6 intentos pendientes", () => {
     const wrapper = shallow(<App />);
+    wrapper.setState({ loading: false });
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con6intentos);
   });
 
   it("se muestra la imagen con 5 intentos pendientes", () => {
     const wrapper = shallow(<App />);
-    wrapper.setState({ cantIntentos: 5 })
+    wrapper.setState({ loading: false, cantIntentos: 5 })
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con5intentos);
   });
 
   it("se muestra la imagen con 4 intentos pendientes", () => {
     const wrapper = shallow(<App />);
-    wrapper.setState({ cantIntentos: 4 })
+    wrapper.setState({ loading: false, cantIntentos: 4 })
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con4intentos);
   });
 
   it("se muestra la imagen con 3 intentos pendientes", () => {
     const wrapper = shallow(<App />);
-    wrapper.setState({ cantIntentos: 3 })
+    wrapper.setState({ loading: false, cantIntentos: 3 })
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con3intentos);
   });
 
   it("se muestra la imagen con 2 intentos pendientes", () => {
     const wrapper = shallow(<App />);
-    wrapper.setState({ cantIntentos: 2 })
+    wrapper.setState({ loading: false, cantIntentos: 2 })
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con2intentos);
   });
 
   it("se muestra la imagen con 1 intentos pendientes", () => {
     const wrapper = shallow(<App />);
-    wrapper.setState({ cantIntentos: 1 })
+    wrapper.setState({ loading: false, cantIntentos: 1 })
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con1intentos);
   });
 
   it("se muestra la imagen con 0 intentos pendientes", () => {
     const wrapper = shallow(<App />);
-    wrapper.setState({ cantIntentos: 0 })
+    wrapper.setState({ loading: false, cantIntentos: 0 })
     const img = wrapper.find('Image');
     expect(img.prop("src")).toEqual(con0intentos);
   });
@@ -71,4 +72,17 @@ describe("Image", () => {
       const habilitado = wrapper.state().habilitado;
       expect(habilitado).toBeFalsy();
   });
- });
+
+  it("boton esta habilitado si la letra no fue ingresada todavia", () => {
+    let letrasIngresadas = [];
+    const wrapper = shallow(<Letra letra={'a'} habilitado={letrasIngresadas.filter(x => x.letra === letra).length <= 0} />);
+    expect(wrapper.state().habilitado).toBeTruthy();
+  });
+
+  it("boton deshabilitado si la letra ya fue ingresada", () => {
+    let letraDelBoton = 'a';
+    let letrasIngresadas = [{ letra: 'a' }]
+    const wrapper = shallow(<Letra letra={letraDelBoton} habilitado={letrasIngresadas.filter(x => x.letra === letraDelBoton).length <= 0} />);
+    expect(wrapper.state().habilitado).toBeFalsy();
+  });
+});
