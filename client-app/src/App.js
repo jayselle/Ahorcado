@@ -24,15 +24,19 @@ class App extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:5000/api/ahorcado').then(response => {
-            this.setState({
-                modelo: response.data.modelo,
-                cantIntentos: response.data.cantIntentos,
-                puntaje: response.data.puntaje,
-                letrasIngresadas: response.data.letrasIngresadas,
-                loading: false
-            });
-        });
+        axios.get('http://localhost:5000/api/ahorcado')
+            .then(response => {
+                this.setState({
+                    modelo: response.data.modelo,
+                    cantIntentos: response.data.cantIntentos,
+                    puntaje: response.data.puntaje,
+                    letrasIngresadas: response.data.letrasIngresadas,
+                    loading: false
+                });
+            })
+            .catch(error => {
+                console.log(error)
+            });;
     }    
 
     generarTablero() {
@@ -53,17 +57,17 @@ class App extends Component {
 
     arriesgarLetra = (letra) => {
         axios.post('http://localhost:5000/api/ahorcado', { letra: letra })
-        .then(response => {
-            this.setState({
-                modelo: response.data.modelo,
-                cantIntentos: response.data.cantIntentos,
-                puntaje: response.data.puntaje,
-                letrasIngresadas: response.data.letrasIngresadas
+            .then(response => {
+                this.setState({
+                    modelo: response.data.modelo,
+                    cantIntentos: response.data.cantIntentos,
+                    puntaje: response.data.puntaje,
+                    letrasIngresadas: response.data.letrasIngresadas
+                })
             })
-        })
-        .catch(error => {
-            console.log(error);
-        });
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     render(){
