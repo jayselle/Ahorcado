@@ -74,8 +74,9 @@ describe("Image", () => {
   });
 
   it("boton esta habilitado si la letra no fue ingresada todavia", () => {
-    let letrasIngresadas = [];
-    const wrapper = shallow(<Letra letra={'a'} habilitado={letrasIngresadas.filter(x => x.letra === letra).length <= 0} />);
+    let letraDelBoton = 'b';
+    let letrasIngresadas = [{ letra: 'a' }]
+    const wrapper = shallow(<Letra letra={letraDelBoton} habilitado={letrasIngresadas.filter(x => x.letra === letraDelBoton).length <= 0} />);
     expect(wrapper.state().habilitado).toBeTruthy();
   });
 
