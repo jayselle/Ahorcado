@@ -17,9 +17,5 @@ matrix:
       script:
         - npm test
         - npm run build
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        local_dir: build
-        on:
-          branch: master
+      before_install:
+        - cd client-app
