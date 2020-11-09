@@ -23,7 +23,8 @@ namespace Persistence
                         Palabra = "automovil",
                         Modelo = "_ _ _ _ _ _ _ _ _",
                         CantIntentos = 6,
-                        Puntaje = 0
+                        Puntaje = 0,
+                        Win = false
                     }
                 );
         }

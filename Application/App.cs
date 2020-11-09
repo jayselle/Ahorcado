@@ -16,8 +16,8 @@ namespace Application
             _context = context;
         }
 
-        #region Palabra
-        public async Task<GetJuegoRespuesta> GetModelo(){
+        #region Juego
+        public async Task<GetJuegoRespuesta> GetJuego(){
             
             var juego = await _context.Juegos.FindAsync(1);
 
@@ -29,12 +29,47 @@ namespace Application
                     x => new GetJuegoRespuesta.LetraIngresada { Letra = x.Letra }).ToList(),
                 CantIntentos = juego.CantIntentos,
                 Puntaje = juego.Puntaje,
-                Coincidencia = false
+                Coincidencia = false,
+                Win = juego.Win
             };
 
             return GetJuegoRespuesta;
         }
+        
+        public async Task<GetJuegoRespuesta> ResetJuego()
+        {
+            var juego = await _context.Juegos.FindAsync(1);
 
+            if (juego != null){
+                juego.Id = 1;
+                juego.Usuario = "Pepe";
+                juego.Palabra = "automovil";
+                juego.Modelo = "_ _ _ _ _ _ _ _ _";
+                juego.CantIntentos = 6;
+                juego.Puntaje = 0;
+                juego.Win = false;
+            }
+
+            var letrasIngresadas = _context.LetraIngresadas.ToList();
+            
+            _context.LetraIngresadas.RemoveRange(letrasIngresadas);
+
+            await _context.SaveChangesAsync();
+
+            var GetJuegoRespuesta = new GetJuegoRespuesta {
+                Modelo = juego.Modelo,
+                LetrasIngresadas = null,
+                CantIntentos = juego.CantIntentos,
+                Puntaje = juego.Puntaje,
+                Coincidencia = false,
+                Win = juego.Win
+            };
+
+            return GetJuegoRespuesta;
+        }
+        #endregion
+
+        #region Palabra
         public async Task<GetJuegoRespuesta> ArriesgarLetra(string letra){
             
             var juego = await _context.Juegos.FindAsync(1);
@@ -68,9 +103,11 @@ namespace Application
                 juego.Puntaje += 100;
                 juego.Modelo = this.GetNewModel(juego.Modelo, juego.Palabra, letra);
             } else {
-                juego.Puntaje -= 100;
+                juego.Puntaje -= 10;
                 juego.CantIntentos -= 1;
             }
+
+            juego.Win = !juego.Modelo.Contains("_");
 
             var success = await _context.SaveChangesAsync() > 0;
 
@@ -83,7 +120,8 @@ namespace Application
                     x => new GetJuegoRespuesta.LetraIngresada { Letra = x.Letra }).ToList(),
                 CantIntentos = juego.CantIntentos,
                 Puntaje = juego.Puntaje,
-                Coincidencia = coincidencia
+                Coincidencia = coincidencia,
+                Win = juego.Win
             };
 
             return GetJuegoRespuesta;

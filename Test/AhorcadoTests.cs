@@ -423,5 +423,33 @@ namespace Test
             // Assert
             Assert.AreEqual(puntaje, 800);
         }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Juego_Todavia_No_Ganado()
+        {
+            // Arrange
+            string modelo = "A _ T _ M _ _ _ _";
+            bool win = false;
+
+            // Act
+            win = !modelo.Contains("_");
+ 
+            // Assert
+            Assert.IsFalse(win);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Juego_Ganado()
+        {
+            // Arrange
+            string modelo = "A U T O M O V I L";
+            bool win = false;
+
+            // Act
+            win = !modelo.Contains("_");
+ 
+            // Assert
+            Assert.IsTrue(win);
+        }
     }
 }

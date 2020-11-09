@@ -4,14 +4,11 @@ import { Button } from 'react-bootstrap';
 class Letra extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			habilitado: props.habilitado
-		}
+		this.state = {}
 	}
 
 	handleClick = () => {
-		this.setState({habilitado: false}, 
-			this.props.onIngresarLetra && this.props.onIngresarLetra(this.props.letra))
+		this.props.onIngresarLetra && this.props.onIngresarLetra(this.props.letra)
 	}
 
 	render(){
@@ -22,15 +19,11 @@ class Letra extends Component {
                 size="lg"
                 className="font-weight-bold text-uppercase m-2" 
                 onClick={this.handleClick}
-                disabled={!this.state.habilitado}>
+                disabled={this.props.deshabilitada}>
                 {this.props.letra}
             </Button>
 		)
 	}
 }
-
-Letra.defaultProps = {
-	habilitado: true
-};
 
 export default Letra;

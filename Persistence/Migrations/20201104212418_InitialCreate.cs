@@ -16,7 +16,8 @@ namespace Persistence.Migrations
                     Palabra = table.Column<string>(nullable: true),
                     Modelo = table.Column<string>(nullable: true),
                     CantIntentos = table.Column<int>(nullable: false),
-                    Puntaje = table.Column<int>(nullable: false)
+                    Puntaje = table.Column<int>(nullable: false),
+                    Win = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,8 +46,8 @@ namespace Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Juegos",
-                columns: new[] { "Id", "CantIntentos", "Modelo", "Palabra", "Puntaje", "Usuario" },
-                values: new object[] { 1, 6, "_ _ _ _ _ _ _ _ _", "automovil", 0, "Pepe" });
+                columns: new[] { "Id", "CantIntentos", "Modelo", "Palabra", "Puntaje", "Usuario", "Win" },
+                values: new object[] { 1, 6, "_ _ _ _ _ _ _ _ _", "automovil", 0, "Pepe", false });
 
             migrationBuilder.CreateIndex(
                 name: "IX_LetraIngresadas_JuegoId",

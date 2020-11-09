@@ -9,7 +9,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201027231623_InitialCreate")]
+    [Migration("20201104212418_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,6 +39,9 @@ namespace Persistence.Migrations
                     b.Property<string>("Usuario")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Win")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Juegos");
@@ -51,7 +54,8 @@ namespace Persistence.Migrations
                             Modelo = "_ _ _ _ _ _ _ _ _",
                             Palabra = "automovil",
                             Puntaje = 0,
-                            Usuario = "Pepe"
+                            Usuario = "Pepe",
+                            Win = false
                         });
                 });
 

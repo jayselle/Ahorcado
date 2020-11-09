@@ -10,6 +10,7 @@ namespace Domain
         public string Modelo { get; set; }
         public int CantIntentos { get; set; }
         public int Puntaje { get; set; }
+        public bool Win { get; set; }
         public List<LetraIngresada> LetrasIngresadas { get; set; }
     }
 }

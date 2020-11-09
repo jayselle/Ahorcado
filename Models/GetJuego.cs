@@ -13,6 +13,7 @@ namespace Models
         public int CantIntentos { get; set; }
 		public int Puntaje { get; set; }
 		public bool Coincidencia { get; set; }
+        public bool Win { get; set; }
         public List<LetraIngresada> LetrasIngresadas { get; set; }
         public class LetraIngresada
         {
