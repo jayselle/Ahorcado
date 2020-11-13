@@ -17,5 +17,6 @@ matrix:
       script:
         - npm test
         - npm run build
+        - npm run coveralls
       before_install:
         - cd client-app
