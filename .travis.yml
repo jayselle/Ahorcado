@@ -6,7 +6,7 @@ matrix:
       solution: Ahorcado.sln
       script:
         - dotnet restore
-        - dotnet test
+        - dotnet test /p:CollectCoverage=true 
     
     - language: node_js
       node_js:
