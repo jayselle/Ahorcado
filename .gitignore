@@ -1,4 +1,5 @@
 bin
 obj
 Test/TestResults
+Test/coverage.json
 .vscode
