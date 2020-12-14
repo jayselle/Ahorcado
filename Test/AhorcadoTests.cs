@@ -2,6 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Domain;
+using Persistence;
+using Models;
+using Application;
 
 namespace Test
 {
@@ -12,12 +16,15 @@ namespace Test
         public void Test_Arriesgar_Letra_Pero_Es_Cualquier_Cosa_Menos_Una_Letra()
         {
             // Arrange
-            string letraIngresada = "*";
+
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Palabra = "*";
             string errorMessage = "";
             
             // Act
             try{
-                if (!letraIngresada.All(char.IsLetter))
+                if (!juego.Palabra.Any(char.IsLetter))
                     throw new ArgumentException("Solo letras");
             } catch (ArgumentException e){
                 errorMessage = e.Message;
@@ -31,12 +38,15 @@ namespace Test
         public void Test_Arriesgar_Letra_Pero_Son_Muchas_Letras()
         {
             // Arrange
-            string letraIngresada = "muchasletras";
+
+            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
+
+            letraIngresada.Letra = "muchasletras";
             string errorMessage = "";
 
             // Act
             try{
-                if (letraIngresada.Length != 1)
+                if (letraIngresada.Letra.Length != 1)
                     throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra");
             } catch (ArgumentOutOfRangeException e){
                 errorMessage = e.Message;
@@ -50,15 +60,19 @@ namespace Test
         public void Test_Arriesgar_Letra_Que_No_Esta()
         {
             // Arrange
-            string palabraParaAdivinar = "automovil";
-            string letraIngresada = "e";
+
+            Domain.Juego juego = new Domain.Juego();
+            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
+
+            juego.Palabra  = "automovil";
+            letraIngresada.Letra = "e";
 
             // Act
             var letras = new List<char>();
             
-            letras.AddRange(palabraParaAdivinar.ToLower());
+            letras.AddRange(juego.Palabra.ToLower());
 
-            bool coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada)));
+            bool coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada.Letra)));
 
             // Assert
             Assert.IsFalse(coincidencia);
@@ -86,20 +100,24 @@ namespace Test
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_No_Esta()
         {
             // Arrange
-            string modeloActual = "_ _ _ _ _ _ _ _ _";
-            string palabraParaAdivinar = "automovil";
-            string letraIngresada = "b";
+
+            Domain.Juego juego = new Domain.Juego();
+            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
+
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.Palabra = "automovil";
+            letraIngresada.Letra = "b";
 
             // Act
-            char l = char.ToLower(char.Parse(letraIngresada));
+            char l = char.ToLower(char.Parse(letraIngresada.Letra));
                         
             var p = new List<char>();
 
-            p.AddRange(palabraParaAdivinar.ToLower());
+            p.AddRange(juego.Palabra.ToLower());
 
             var modeloSinEspacios = new List<char>();
 
-            modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+            modeloSinEspacios.AddRange(juego.Modelo.Replace(" ",""));
 
             for (int i = 0; i < p.Count; i++){
                 if (p[i] == l)
