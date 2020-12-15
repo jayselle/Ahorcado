@@ -82,15 +82,18 @@ namespace Test
         public void Test_Arriesgar_Letra_Que_Si_Esta()
         {
             // Arrange
-            string palabraParaAdivinar = "automovil";
-            string letraIngresada = "a";
+            Domain.Juego juego = new Domain.Juego();
+            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
+
+            juego.Palabra = "automovil";
+            letraIngresada.Letra = "a";
 
             // Act
             var letras = new List<char>();
             
-            letras.AddRange(palabraParaAdivinar.ToLower());
+            letras.AddRange(juego.Palabra.ToLower());
 
-            bool coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada)));
+            bool coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada.Letra)));
 
             // Assert
             Assert.IsTrue(coincidencia);
@@ -141,20 +144,24 @@ namespace Test
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Si_Esta()
         {
             // Arrange
-            string modeloActual = "_ _ _ _ _ _ _ _ _";
-            string palabraParaAdivinar = "automovil";
-            string letraIngresada = "a";
+
+            Domain.Juego juego = new Domain.Juego();
+            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
+
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.Palabra = "automovil";
+            letraIngresada.Letra = "a";
 
             // Act
-            char l = char.ToLower(char.Parse(letraIngresada));
+            char l = char.ToLower(char.Parse(letraIngresada.Letra));
                         
             var p = new List<char>();
 
-            p.AddRange(palabraParaAdivinar.ToLower());
+            p.AddRange(juego.Palabra.ToLower());
 
             var modeloSinEspacios = new List<char>();
 
-            modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+            modeloSinEspacios.AddRange(juego.Modelo.Replace(" ",""));
 
             for (int i = 0; i < p.Count; i++){
                 if (p[i] == l)
@@ -178,20 +185,24 @@ namespace Test
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Esta_Repetida()
         {
             // Arrange
-            string modeloActual = "_ _ _ _ _ _ _ _ _";
-            string palabraParaAdivinar = "automovil";
-            string letraIngresada = "o";
+
+            Domain.Juego juego = new Domain.Juego();
+            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
+
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.Palabra = "automovil";
+            letraIngresada.Letra = "o";
 
             // Act
-            char l = char.ToLower(char.Parse(letraIngresada));
+            char l = char.ToLower(char.Parse(letraIngresada.Letra));
                         
             var p = new List<char>();
 
-            p.AddRange(palabraParaAdivinar.ToLower());
+            p.AddRange(juego.Palabra.ToLower());
 
             var modeloSinEspacios = new List<char>();
 
-            modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+            modeloSinEspacios.AddRange(juego.Modelo.Replace(" ",""));
 
             for (int i = 0; i < p.Count; i++){
                 if (p[i] == l)
@@ -214,9 +225,16 @@ namespace Test
         [TestMethod]
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Despues_De_Ingresar_Letras_Que_No_Coinciden()
         {
+
+            
+
+
             // Arrange
-            string modeloActual = "_ _ _ _ _ _ _ _ _";
-            string palabraParaAdivinar = "automovil";
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.Palabra = "automovil";
+
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("p");
             letrasIngresadas.Add("r");
@@ -230,11 +248,11 @@ namespace Test
                         
                 var p = new List<char>();
 
-                p.AddRange(palabraParaAdivinar.ToLower());
+                p.AddRange(juego.Palabra.ToLower());
 
                 var modeloSinEspacios = new List<char>();
 
-                modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+                modeloSinEspacios.AddRange(juego.Modelo.Replace(" ",""));
 
                 for (int i = 0; i < p.Count; i++){
                     if (p[i] == l)
@@ -250,19 +268,21 @@ namespace Test
                         str += modeloSinEspacios[i] + " ";
                 }
 
-                modeloActual = str;
+                juego.Modelo = str;
             }
  
             // Assert
-            Assert.AreEqual(modeloActual, "_ _ _ _ _ _ _ _ _");
+            Assert.AreEqual(juego.Modelo, "_ _ _ _ _ _ _ _ _");
         }
 
         [TestMethod]
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Despues_De_Ingresar_Las_Letras_D_O_Q_L()
         {
             // Arrange
-            string modeloActual = "_ _ _ _ _ _ _ _ _";
-            string palabraParaAdivinar = "automovil";
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.Palabra = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("d");
             letrasIngresadas.Add("o");
@@ -276,11 +296,11 @@ namespace Test
                         
                 var p = new List<char>();
 
-                p.AddRange(palabraParaAdivinar.ToLower());
+                p.AddRange(juego.Palabra.ToLower());
 
                 var modeloSinEspacios = new List<char>();
 
-                modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+                modeloSinEspacios.AddRange(juego.Modelo.Replace(" ",""));
 
                 for (int i = 0; i < p.Count; i++){
                     if (p[i] == l)
@@ -296,19 +316,21 @@ namespace Test
                         str += modeloSinEspacios[i] + " ";
                 }
 
-                modeloActual = str;
+                juego.Modelo = str;
             }
  
             // Assert
-            Assert.AreEqual(modeloActual, "_ _ _ O _ O _ _ L");
+            Assert.AreEqual(juego.Modelo, "_ _ _ O _ O _ _ L");
         }
 
         [TestMethod]
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Completo_Despues_De_Ingresar_Letras_Que_Si_Coinciden()
         {
             // Arrange
-            string modeloActual = "_ _ _ _ _ _ _ _ _";
-            string palabraParaAdivinar = "automovil";
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.Palabra = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("l");
             letrasIngresadas.Add("U");
@@ -326,11 +348,11 @@ namespace Test
                         
                 var p = new List<char>();
 
-                p.AddRange(palabraParaAdivinar.ToLower());
+                p.AddRange(juego.Palabra.ToLower());
 
                 var modeloSinEspacios = new List<char>();
 
-                modeloSinEspacios.AddRange(modeloActual.Replace(" ",""));
+                modeloSinEspacios.AddRange(juego.Modelo.Replace(" ",""));
 
                 for (int i = 0; i < p.Count; i++){
                     if (p[i] == l)
@@ -346,18 +368,20 @@ namespace Test
                         str += modeloSinEspacios[i] + " ";
                 }
 
-                modeloActual = str;
+                juego.Modelo = str;
             }
  
             // Assert
-            Assert.AreEqual(modeloActual, "A U T O M O V I L");
+            Assert.AreEqual(juego.Modelo, "A U T O M O V I L");
         }
 
         [TestMethod]
         public void Test_Modelo_Ahorcado_Juego_Perdido_Con_Seis_Intentos_Fallidos()
         {
             // Arrange
-            string palabraParaAdivinar = "automovil";
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Palabra = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("s");
             letrasIngresadas.Add("Y");
@@ -365,28 +389,31 @@ namespace Test
             letrasIngresadas.Add("c");
             letrasIngresadas.Add("R");
             letrasIngresadas.Add("K");
-            int cantIntentos = 6;
+            juego.CantIntentos = 6;
 
             // Act
             var letras = new List<char>();
             
-            letras.AddRange(palabraParaAdivinar.ToLower());
+            letras.AddRange(juego.Palabra.ToLower());
 
             foreach (var letraIngresada in letrasIngresadas)
             {
                 if (!letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada))))
-                    cantIntentos = cantIntentos - 1;
+                    juego.CantIntentos = juego.CantIntentos - 1;
             }
 
             // Assert
-            Assert.AreEqual(cantIntentos, 0);
+            Assert.AreEqual(juego.CantIntentos, 0);
         }
 
         [TestMethod]
         public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Fallidos()
         {
             // Arrange
-            string palabraParaAdivinar = "automovil";
+
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Palabra = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("s");
             letrasIngresadas.Add("Y");
@@ -394,28 +421,30 @@ namespace Test
             letrasIngresadas.Add("c");
             letrasIngresadas.Add("R");
             letrasIngresadas.Add("K");
-            int puntaje = 0;
+            juego.Puntaje = 0;
             
             // Act
             var letras = new List<char>();
             
-            letras.AddRange(palabraParaAdivinar.ToLower());
+            letras.AddRange(juego.Palabra.ToLower());
 
             foreach (var letraIngresada in letrasIngresadas)
             {
                 if (!letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada))))
-                    puntaje = puntaje - 10;
+                    juego.Puntaje = juego.Puntaje - 10;
             }
  
             // Assert
-            Assert.AreEqual(puntaje, -60);
+            Assert.AreEqual(juego.Puntaje, -60);
         }
 
         [TestMethod]
         public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Acertados()
         {
             // Arrange
-            string palabraParaAdivinar = "automovil";
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Palabra = "automovil";
             var letrasIngresadas = new List<string>();
             letrasIngresadas.Add("l");
             letrasIngresadas.Add("U");
@@ -425,49 +454,54 @@ namespace Test
             letrasIngresadas.Add("o");
             letrasIngresadas.Add("v");
             letrasIngresadas.Add("i");
-            int puntaje = 0;
+            juego.Puntaje = 0;
             
              // Act
             var letras = new List<char>();
             
-            letras.AddRange(palabraParaAdivinar.ToLower());
+            letras.AddRange(juego.Palabra.ToLower());
 
             foreach (var letraIngresada in letrasIngresadas)
             {
                 if (letras.Exists(x => x == char.ToLower(char.Parse(letraIngresada))))
-                    puntaje = puntaje + 100;
+                    juego.Puntaje = juego.Puntaje + 100;
             }
  
             // Assert
-            Assert.AreEqual(puntaje, 800);
+            Assert.AreEqual(juego.Puntaje, 800);
         }
 
         [TestMethod]
         public void Test_Modelo_Ahorcado_Juego_Todavia_No_Ganado()
         {
             // Arrange
-            string modelo = "A _ T _ M _ _ _ _";
-            bool win = false;
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Modelo = "A _ T _ M _ _ _ _";
+            juego.Win = false;
 
             // Act
-            win = !modelo.Contains("_");
+            juego.Win = !juego.Modelo.Contains("_");
  
             // Assert
-            Assert.IsFalse(win);
+            Assert.IsFalse(juego.Win);
         }
 
         [TestMethod]
         public void Test_Modelo_Ahorcado_Juego_Ganado()
         {
             // Arrange
-            string modelo = "A U T O M O V I L";
-            bool win = false;
+
+            Domain.Juego juego = new Domain.Juego();
+
+            juego.Modelo = "A U T O M O V I L";
+            juego.Win = false;
 
             // Act
-            win = !modelo.Contains("_");
+            juego.Win = !juego.Modelo.Contains("_");
  
             // Assert
-            Assert.IsTrue(win);
+            Assert.IsTrue(juego.Win);
         }
     }
 }
