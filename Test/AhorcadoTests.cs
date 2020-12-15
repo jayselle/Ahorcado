@@ -1,11 +1,6 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Domain;
-using Persistence;
-using Models;
-using Application;
 
 namespace Test
 {
@@ -13,54 +8,9 @@ namespace Test
     public class JuegoTests
     {
         [TestMethod]
-        public void Test_Arriesgar_Letra_Pero_Es_Cualquier_Cosa_Menos_Una_Letra()
-        {
-            // Arrange
-
-            Domain.Juego juego = new Domain.Juego();
-
-            juego.Palabra = "*";
-            string errorMessage = "";
-            
-            // Act
-            try{
-                if (!juego.Palabra.Any(char.IsLetter))
-                    throw new ArgumentException("Solo letras");
-            } catch (ArgumentException e){
-                errorMessage = e.Message;
-            }
-
-            // Assert
-            Assert.AreEqual("Solo letras", errorMessage);
-        }
-
-        [TestMethod]
-        public void Test_Arriesgar_Letra_Pero_Son_Muchas_Letras()
-        {
-            // Arrange
-
-            Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
-
-            letraIngresada.Letra = "muchasletras";
-            string errorMessage = "";
-
-            // Act
-            try{
-                if (letraIngresada.Letra.Length != 1)
-                    throw new ArgumentOutOfRangeException(string.Empty, "Ingresar solo una letra");
-            } catch (ArgumentOutOfRangeException e){
-                errorMessage = e.Message;
-            }
-
-            // Assert
-            Assert.AreEqual("Ingresar solo una letra", errorMessage);
-        }
-
-        [TestMethod]
         public void Test_Arriesgar_Letra_Que_No_Esta()
         {
             // Arrange
-
             Domain.Juego juego = new Domain.Juego();
             Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
 
@@ -103,7 +53,6 @@ namespace Test
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_No_Esta()
         {
             // Arrange
-
             Domain.Juego juego = new Domain.Juego();
             Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
 
@@ -144,7 +93,6 @@ namespace Test
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Si_Esta()
         {
             // Arrange
-
             Domain.Juego juego = new Domain.Juego();
             Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
 
@@ -185,7 +133,6 @@ namespace Test
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Sin_Aciertos_Previos_Con_Letra_Que_Esta_Repetida()
         {
             // Arrange
-
             Domain.Juego juego = new Domain.Juego();
             Domain.LetraIngresada letraIngresada = new Domain.LetraIngresada();
 
@@ -225,10 +172,6 @@ namespace Test
         [TestMethod]
         public void Test_Metodo_GetNewModel_Modelo_Ahorcado_Despues_De_Ingresar_Letras_Que_No_Coinciden()
         {
-
-            
-
-
             // Arrange
             Domain.Juego juego = new Domain.Juego();
 
@@ -410,7 +353,6 @@ namespace Test
         public void Test_Modelo_Ahorcado_Puntaje_Con_Todos_Los_Intentos_Fallidos()
         {
             // Arrange
-
             Domain.Juego juego = new Domain.Juego();
 
             juego.Palabra = "automovil";
@@ -491,7 +433,6 @@ namespace Test
         public void Test_Modelo_Ahorcado_Juego_Ganado()
         {
             // Arrange
-
             Domain.Juego juego = new Domain.Juego();
 
             juego.Modelo = "A U T O M O V I L";
@@ -502,6 +443,126 @@ namespace Test
  
             // Assert
             Assert.IsTrue(juego.Win);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Helper_Modelo_Correcto()
+        {
+            // Arrange
+            Application.App app = new Application.App(null);
+
+            // Act
+            string newModel = app.GetNewModel("_ _ _ _ _ _ _ _ _", "automovil", "a");
+ 
+            // Assert
+            Assert.AreEqual("A _ _ _ _ _ _ _ _", newModel);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Helper_Modelo_Incorrecto()
+        {
+            // Arrange
+            Application.App app = new Application.App(null);
+
+            // Act
+            string newModel = app.GetNewModel("_ _ _ _ _ _ _ _ _", "automovil", "a");
+ 
+            // Assert
+            Assert.AreNotEqual("_ U _ _ _ _ _ _ _", newModel);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Validation_Letra_Correcta()
+        {
+            // Arrange
+            Application.App app = new Application.App(null);
+            string letra = "a";
+            var letrasIngresadas = new List<LetraIngresada>();
+            letrasIngresadas.Add(new LetraIngresada { Letra = "u", Juego = null });
+            letrasIngresadas.Add(new LetraIngresada { Letra = "p", Juego = null });
+            
+            // Act
+            var validationResponse = app.ValidateLetra(letra, letrasIngresadas);
+ 
+            // Assert
+            Assert.IsFalse(validationResponse.Error);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Validation_No_Es_Letra()
+        {
+            // Arrange
+            Application.App app = new Application.App(null);
+            string letra = "*";
+            var letrasIngresadas = new List<LetraIngresada>();
+            letrasIngresadas.Add(new LetraIngresada { Letra = "u", Juego = null });
+            letrasIngresadas.Add(new LetraIngresada { Letra = "p", Juego = null });
+            
+            // Act
+            var validationResponse = app.ValidateLetra(letra, letrasIngresadas);
+ 
+            // Assert
+            Assert.IsTrue(validationResponse.Error);
+            Assert.AreEqual("Solo letras.", validationResponse.Mensaje);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Validation_Muchas_Letras()
+        {
+            // Arrange
+            Application.App app = new Application.App(null);
+            string letra = "bb";
+            var letrasIngresadas = new List<LetraIngresada>();
+            letrasIngresadas.Add(new LetraIngresada { Letra = "u", Juego = null });
+            letrasIngresadas.Add(new LetraIngresada { Letra = "p", Juego = null });
+            
+            // Act
+            var validationResponse = app.ValidateLetra(letra, letrasIngresadas);
+ 
+            // Assert
+            Assert.IsTrue(validationResponse.Error);
+            Assert.AreEqual("Ingresar solo una letra.", validationResponse.Mensaje);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_Validation_Letra_Ya_Ingresada()
+        {
+            // Arrange
+            Application.App app = new Application.App(null);
+            string letra = "a";
+            var letrasIngresadas = new List<LetraIngresada>();
+            letrasIngresadas.Add(new LetraIngresada { Letra = "t", Juego = null });
+            letrasIngresadas.Add(new LetraIngresada { Letra = "a", Juego = null });
+            
+            // Act
+            var validationResponse = app.ValidateLetra(letra, letrasIngresadas);
+ 
+            // Assert
+            Assert.IsTrue(validationResponse.Error);
+            Assert.AreEqual("Letra ya ingresada.", validationResponse.Mensaje);
+        }
+
+        [TestMethod]
+        public void Test_Modelo_Ahorcado_SetJuego()
+        {
+            // Arrange
+            Juego juego = new Juego();
+            juego.Palabra = "automovil";
+            juego.Modelo = "_ _ _ _ _ _ _ _ _";
+            juego.CantIntentos = 6;
+            juego.Puntaje = 0;
+            juego.Win = false;
+            Application.App app = new Application.App(null);
+
+            // Act
+            var setJuegoResponse = app.SetJuego(juego, "a");
+ 
+            // Assert
+            Assert.AreEqual(100, setJuegoResponse.Puntaje);
+            Assert.AreEqual("A _ _ _ _ _ _ _ _", setJuegoResponse.Modelo);
+            Assert.AreEqual(6, setJuegoResponse.CantIntentos);
+            Assert.IsFalse(setJuegoResponse.Win);
+            Assert.IsTrue(setJuegoResponse.Coincidencia);
         }
     }
 }

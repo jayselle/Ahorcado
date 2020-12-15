@@ -76,38 +76,24 @@ namespace Application
 
             var letrasIngresadas = _context.LetraIngresadas.Where(x => x.Juego.Id == 1).ToList();
 
-            if (!letra.All(char.IsLetter))
-                throw new Exception("Solo letras.");
-            if (letra.Length != 1)
-                throw new Exception("Ingresar solo una letra.");
+            var validationResponse = ValidateLetra(letra, letrasIngresadas);
+
+            if (validationResponse.Error)
+                throw new Exception(validationResponse.Mensaje);
             
-            if (letrasIngresadas.Exists(x => x.Letra == letra)){
-                 throw new Exception("Letra ya ingresada.");
-            } else {
-                var nuevaLetra = new LetraIngresada {
-                    Letra = letra,
-                    Juego = juego
-                };
+            var nuevaLetra = new LetraIngresada {
+                Letra = letra,
+                Juego = juego
+            };
 
-                letrasIngresadas.Add(nuevaLetra);
-                _context.LetraIngresadas.Add(nuevaLetra);
-            }
+            letrasIngresadas.Add(nuevaLetra);
+            _context.LetraIngresadas.Add(nuevaLetra);
 
-            var letras = new List<char>();
-            
-            letras.AddRange(juego.Palabra.ToLower());
-
-            var coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letra)));
-
-            if (coincidencia) {
-                juego.Puntaje += 100;
-                juego.Modelo = this.GetNewModel(juego.Modelo, juego.Palabra, letra);
-            } else {
-                juego.Puntaje -= 10;
-                juego.CantIntentos -= 1;
-            }
-
-            juego.Win = !juego.Modelo.Contains("_");
+            var setJuegoResponse = this.SetJuego(juego, letra);
+            juego.Puntaje = setJuegoResponse.Puntaje;
+            juego.Modelo = setJuegoResponse.Modelo;
+            juego.CantIntentos = setJuegoResponse.CantIntentos;
+            juego.Win = setJuegoResponse.Win;
 
             var success = await _context.SaveChangesAsync() > 0;
 
@@ -120,11 +106,52 @@ namespace Application
                     x => new GetJuegoRespuesta.LetraIngresada { Letra = x.Letra }).ToList(),
                 CantIntentos = juego.CantIntentos,
                 Puntaje = juego.Puntaje,
-                Coincidencia = coincidencia,
+                Coincidencia = setJuegoResponse.Coincidencia,
                 Win = juego.Win
             };
 
             return GetJuegoRespuesta;
+        }
+
+        public ValidationResponse ValidateLetra(string letra, List<LetraIngresada> letrasIngresadas) {
+            bool error = false;
+            string mensaje = "";
+
+            if (!letra.All(char.IsLetter)) {
+                error = true;
+                mensaje = "Solo letras.";
+            } else if (letra.Length != 1) {
+                error = true;
+                mensaje = "Ingresar solo una letra.";
+            } else if (letrasIngresadas.Exists(x => x.Letra == letra)) {
+                error = true;
+                mensaje = "Letra ya ingresada.";
+            }
+
+            return new ValidationResponse {
+                Error = error,
+                Mensaje = mensaje,
+            };
+        }
+
+        public SetJuegoResponse SetJuego(Juego juego, string letra) {
+            var letras = new List<char>();
+            
+            letras.AddRange(juego.Palabra.ToLower());
+
+            var coincidencia = letras.Exists(x => x == char.ToLower(char.Parse(letra)));
+
+            string newModelo = this.GetNewModel(juego.Modelo, juego.Palabra, letra);
+
+            var response = new SetJuegoResponse {
+                Puntaje = coincidencia ? (juego.Puntaje += 100) : (juego.Puntaje -= 10),
+                Modelo = coincidencia ? newModelo : juego.Modelo,
+                CantIntentos = coincidencia ? juego.CantIntentos : (juego.CantIntentos -= 1),
+                Win = !newModelo.Contains("_"),
+                Coincidencia = coincidencia
+            };
+
+            return response;
         }
         #endregion
 
